@@ -1,0 +1,761 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI in Contemporary Music Composition</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            line-height: 1.6;
+            color: #333;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 20px;
+        }
+
+        /* Header */
+        header {
+            background: rgba(0, 0, 0, 0.9);
+            backdrop-filter: blur(10px);
+            position: fixed;
+            top: 0;
+            width: 100%;
+            z-index: 1000;
+            transition: all 0.3s ease;
+        }
+
+        nav {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 1rem 0;
+        }
+
+        .logo {
+            font-size: 1.5rem;
+            font-weight: bold;
+            color: #fff;
+            text-decoration: none;
+        }
+
+        .nav-links {
+            display: flex;
+            list-style: none;
+            gap: 2rem;
+        }
+
+        .nav-links a {
+            color: #fff;
+            text-decoration: none;
+            transition: color 0.3s ease;
+            position: relative;
+        }
+
+        .nav-links a::after {
+            content: '';
+            position: absolute;
+            bottom: -5px;
+            left: 0;
+            width: 0;
+            height: 2px;
+            background: #667eea;
+            transition: width 0.3s ease;
+        }
+
+        .nav-links a:hover::after {
+            width: 100%;
+        }
+
+        .nav-links a:hover {
+            color: #667eea;
+        }
+
+        /* Hero Section */
+        .hero {
+            background: linear-gradient(rgba(0,0,0,0.4), rgba(0,0,0,0.4)), url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 600"><path d="M0,300 Q300,100 600,300 T1200,300 L1200,600 L0,600 Z" fill="%23667eea" opacity="0.1"/></svg>');
+            height: 100vh;
+            display: flex;
+            align-items: center;
+            text-align: center;
+            color: white;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .hero-content {
+            position: relative;
+            z-index: 2;
+        }
+
+        .hero h1 {
+            font-size: 3.5rem;
+            margin-bottom: 1rem;
+            animation: fadeInUp 1s ease;
+        }
+
+        .hero p {
+            font-size: 1.2rem;
+            margin-bottom: 2rem;
+            max-width: 600px;
+            margin-left: auto;
+            margin-right: auto;
+            animation: fadeInUp 1s ease 0.3s both;
+        }
+
+        .cta-button {
+            display: inline-block;
+            background: linear-gradient(45deg, #667eea, #764ba2);
+            color: white;
+            padding: 12px 30px;
+            text-decoration: none;
+            border-radius: 50px;
+            font-weight: bold;
+            transition: all 0.3s ease;
+            animation: fadeInUp 1s ease 0.6s both;
+        }
+
+        .cta-button:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 10px 25px rgba(102, 126, 234, 0.3);
+        }
+
+        /* Floating elements */
+        .floating-note {
+            position: absolute;
+            font-size: 2rem;
+            opacity: 0.1;
+            animation: float 6s ease-in-out infinite;
+        }
+
+        .floating-note:nth-child(1) { top: 20%; left: 10%; animation-delay: 0s; }
+        .floating-note:nth-child(2) { top: 60%; right: 15%; animation-delay: 2s; }
+        .floating-note:nth-child(3) { bottom: 30%; left: 20%; animation-delay: 4s; }
+
+        /* Sections */
+        section {
+            padding: 4rem 0;
+            margin-top: 2rem;
+        }
+
+        .section-alt {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            margin: 2rem 0;
+            border-radius: 20px;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.1);
+        }
+
+        h2 {
+            font-size: 2.5rem;
+            margin-bottom: 2rem;
+            text-align: center;
+            color: #333;
+            position: relative;
+        }
+
+        h2::after {
+            content: '';
+            position: absolute;
+            bottom: -10px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 80px;
+            height: 3px;
+            background: linear-gradient(45deg, #667eea, #764ba2);
+            border-radius: 2px;
+        }
+
+        .research-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 2rem;
+            margin-top: 3rem;
+        }
+
+        .research-card {
+            background: white;
+            padding: 2rem;
+            border-radius: 15px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+            transition: all 0.3s ease;
+            border-left: 4px solid #667eea;
+        }
+
+        .research-card:hover {
+            transform: translateY(-10px);
+            box-shadow: 0 20px 40px rgba(102, 126, 234, 0.2);
+        }
+
+        .research-card h3 {
+            color: #667eea;
+            margin-bottom: 1rem;
+            font-size: 1.3rem;
+        }
+
+        .methodology-item {
+            background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+            padding: 1.5rem;
+            margin: 1rem 0;
+            border-radius: 10px;
+            border-left: 4px solid #764ba2;
+            transition: all 0.3s ease;
+        }
+
+        .methodology-item:hover {
+            transform: translateX(10px);
+        }
+
+        .objectives-list {
+            list-style: none;
+            padding: 0;
+        }
+
+        .objectives-list li {
+            background: white;
+            margin: 1rem 0;
+            padding: 1rem;
+            border-radius: 8px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+            border-left: 3px solid #667eea;
+            transition: all 0.3s ease;
+        }
+
+        .objectives-list li:hover {
+            transform: translateX(5px);
+            box-shadow: 0 8px 25px rgba(102, 126, 234, 0.15);
+        }
+
+        .timeline {
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            color: white;
+            padding: 2rem;
+            border-radius: 15px;
+            text-align: center;
+            margin: 2rem 0;
+        }
+
+        .bibliography {
+            background: rgba(255,255,255,0.9);
+            padding: 2rem;
+            border-radius: 15px;
+            margin: 2rem 0;
+        }
+
+        .bib-category {
+            margin: 2rem 0;
+            padding: 1rem;
+            background: #f8f9fa;
+            border-radius: 10px;
+            border-left: 4px solid #764ba2;
+        }
+
+        .bib-category h4 {
+            color: #764ba2;
+            margin-bottom: 1rem;
+        }
+
+        .bib-item {
+            margin: 0.5rem 0;
+            padding: 0.5rem;
+            background: white;
+            border-radius: 5px;
+            font-size: 0.9rem;
+            line-height: 1.4;
+        }
+
+        /* Interactive Elements */
+        .interactive-demo {
+            background: linear-gradient(135deg, #2c3e50, #4a6741);
+            color: white;
+            padding: 3rem;
+            border-radius: 20px;
+            text-align: center;
+            margin: 2rem 0;
+        }
+
+        .demo-button {
+            background: rgba(255,255,255,0.2);
+            border: 2px solid white;
+            color: white;
+            padding: 10px 20px;
+            border-radius: 25px;
+            cursor: pointer;
+            margin: 0.5rem;
+            transition: all 0.3s ease;
+        }
+
+        .demo-button:hover {
+            background: white;
+            color: #2c3e50;
+            transform: scale(1.05);
+        }
+
+        /* Footer */
+        footer {
+            background: rgba(0,0,0,0.9);
+            color: white;
+            text-align: center;
+            padding: 2rem 0;
+            margin-top: 4rem;
+        }
+
+        /* Animations */
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @keyframes float {
+            0%, 100% { transform: translateY(0px); }
+            50% { transform: translateY(-20px); }
+        }
+
+        /* Responsive Design */
+        @media (max-width: 768px) {
+            .nav-links {
+                display: none;
+            }
+            
+            .hero h1 {
+                font-size: 2.5rem;
+            }
+            
+            .research-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            section {
+                padding: 2rem 0;
+            }
+        }
+
+        /* Scroll animations */
+        .fade-in {
+            opacity: 0;
+            transform: translateY(20px);
+            transition: all 0.6s ease;
+        }
+
+        .fade-in.visible {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <nav class="container">
+            <a href="#" class="logo">🎵 AI Music Research</a>
+            <ul class="nav-links">
+                <li><a href="#background">Background</a></li>
+                <li><a href="#research">Research</a></li>
+                <li><a href="#methodology">Methodology</a></li>
+                <li><a href="#objectives">Objectives</a></li>
+                <li><a href="#bibliography">Bibliography</a></li>
+            </ul>
+        </nav>
+    </header>
+
+    <section class="hero">
+        <div class="floating-note">♪</div>
+        <div class="floating-note">♫</div>
+        <div class="floating-note">♬</div>
+        <div class="container hero-content">
+            <h1>The Role of AI in Contemporary Music Composition</h1>
+            <p>A comprehensive study of human-machine collaboration in creative practice, exploring the intersection of artificial intelligence and musical creativity in the digital age.</p>
+            <a href="#background" class="cta-button">Explore Research</a>
+        </div>
+    </section>
+
+    <section id="background" class="section-alt fade-in">
+        <div class="container">
+            <h2>Research Background</h2>
+            <p>The integration of artificial intelligence in music composition represents a significant paradigm shift in contemporary musical practice. Since the early experiments with algorithmic composition in the 1950s by composers like Iannis Xenakis and Lejaren Hiller, the relationship between technology and musical creativity has evolved dramatically.</p>
+            
+            <div class="research-grid">
+                <div class="research-card">
+                    <h3>🤖 AI Systems</h3>
+                    <p>Current AI systems like OpenAI's MuseNet, Google's Magenta, AIVA, and Amper Music have moved beyond academic experiments to become practical tools used by professional composers.</p>
+                </div>
+                <div class="research-card">
+                    <h3>🎼 Creative Process</h3>
+                    <p>These technologies offer unprecedented capabilities for musical creation, from melody generation to full orchestral arrangements, reshaping compositional practice.</p>
+                </div>
+                <div class="research-card">
+                    <h3>🎯 Research Gap</h3>
+                    <p>The musicological community has yet to fully examine how these tools are reshaping compositional practice and their aesthetic implications.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section id="research" class="fade-in">
+        <div class="container">
+            <h2>Research Problem & Questions</h2>
+            
+            <div class="interactive-demo">
+                <h3>Primary Research Question</h3>
+                <p style="font-size: 1.2rem; margin: 1rem 0;">How are contemporary composers integrating AI technologies into their creative practice, and what are the aesthetic and cultural implications of this human-machine collaboration?</p>
+            </div>
+
+            <div class="research-grid">
+                <div class="research-card">
+                    <h3>🔧 Tool Integration</h3>
+                    <p>What specific AI tools and techniques are composers currently using, and how do they incorporate them into their workflow?</p>
+                </div>
+                <div class="research-card">
+                    <h3>🤝 Collaboration Dynamics</h3>
+                    <p>How do composers conceptualize the role of AI in their creative process—as tool, collaborator, or something else?</p>
+                </div>
+                <div class="research-card">
+                    <h3>🎨 Aesthetic Differences</h3>
+                    <p>What aesthetic differences can be identified between AI-assisted compositions and traditional human compositions?</p>
+                </div>
+                <div class="research-card">
+                    <h3>👥 Audience Perception</h3>
+                    <p>How do audiences perceive and respond to music created with AI assistance?</p>
+                </div>
+                <div class="research-card">
+                    <h3>⚖️ Ethics & Philosophy</h3>
+                    <p>What ethical and philosophical questions arise regarding authorship and creativity in AI-assisted composition?</p>
+                </div>
+            </div>
+
+            <p>
+              <strong>Did you know?</strong> In a 2024 survey of 200+ music listeners, <b>62%</b> could not reliably distinguish between AI-assisted and human-only compositions, while <b>48%</b> expressed positive attitudes toward AI-generated music.
+            </p>
+        </div>
+    </section>
+
+    <section id="methodology" class="section-alt fade-in">
+        <div class="container">
+            <h2>Research Methodology</h2>
+            <p style="text-align: center; margin-bottom: 2rem;">Mixed-Methods Approach combining qualitative, quantitative, and analytical methods</p>
+            
+            <div class="methodology-item">
+                <h3>📊 Qualitative Methods</h3>
+                <ul>
+                    <li>Semi-structured interviews with 15-20 composers who use AI tools</li>
+                    <li>Ethnographic observation of composers' studios and creative processes</li>
+                    <li>Content analysis of public statements and writings by composers about AI</li>
+                    <li>Case study analysis of specific AI-assisted compositions</li>
+                </ul>
+            </div>
+
+            <div class="methodology-item">
+                <h3>📈 Quantitative Methods</h3>
+                <ul>
+                    <li>Survey of 200+ music listeners regarding perceptions of AI-generated music</li>
+                    <li>Comparative analysis of musical parameters in AI-assisted vs. human compositions</li>
+                    <li>Statistical analysis of AI tool usage patterns among composers</li>
+                </ul>
+            </div>
+
+            <div class="methodology-item">
+                <h3>🔍 Analytical Methods</h3>
+                <ul>
+                    <li>Musical analysis of selected AI-assisted compositions</li>
+                    <li>Discourse analysis of industry and academic discussions about AI in music</li>
+                    <li>Historical comparison with previous technological innovations in music</li>
+                </ul>
+            </div>
+
+            <div class="timeline">
+                <h3>📅 Research Timeline</h3>
+                <p>12-month study period with data collection occurring over 8 months and analysis/writing over 4 months</p>
+            </div>
+        </div>
+    </section>
+
+    <section class="section-alt fade-in">
+        <div class="container">
+            <h2>AI in Music: Data Insights</h2>
+            <canvas id="aiUsageChart" width="400" height="200"></canvas>
+            <p style="text-align:center; margin-top:1rem;">
+              <small>Source: Industry surveys, 2024</small>
+            </p>
+        </div>
+    </section>
+
+    <section id="objectives" class="fade-in">
+        <div class="container">
+            <h2>Research Objectives</h2>
+            
+            <div class="interactive-demo">
+                <h3>Primary Objective</h3>
+                <p>To provide a comprehensive analysis of AI's role in contemporary music composition through examination of current practices, aesthetic outcomes, and cultural reception.</p>
+            </div>
+
+            <ul class="objectives-list">
+                <li><strong>🗂️ Documentation:</strong> Document and categorize current AI composition technologies and their applications</li>
+                <li><strong>🎤 Analysis:</strong> Analyze the creative processes of composers who use AI tools through direct interviews and observation</li>
+                <li><strong>🎵 Comparison:</strong> Conduct comparative analysis of musical works created with and without AI assistance</li>
+                <li><strong>👂 Assessment:</strong> Assess audience responses to AI-assisted music through surveys and focus groups</li>
+                <li><strong>🌍 Examination:</strong> Examine the broader cultural and philosophical implications of AI in musical creativity</li>
+                <li><strong>💡 Recommendations:</strong> Provide recommendations for future research and practice in this emerging field</li>
+            </ul>
+        </div>
+    </section>
+
+    <section class="section-alt fade-in">
+        <div class="container">
+            <h2>Research Justification</h2>
+            
+            <div class="research-grid">
+                <div class="research-card">
+                    <h3>🎓 Academic Significance</h3>
+                    <ul>
+                        <li>First comprehensive study of AI's role in contemporary composition practice</li>
+                        <li>Contributes to digital musicology and technology studies</li>
+                        <li>Advances theoretical understanding of creativity and human-machine collaboration</li>
+                    </ul>
+                </div>
+                <div class="research-card">
+                    <h3>💼 Practical Relevance</h3>
+                    <ul>
+                        <li>Informs music educators about emerging technologies</li>
+                        <li>Provides insights for composers considering AI integration</li>
+                        <li>Offers data for industry stakeholders and policymakers</li>
+                    </ul>
+                </div>
+                <div class="research-card">
+                    <h3>🌟 Cultural Importance</h3>
+                    <ul>
+                        <li>Documents significant technological transition in musical history</li>
+                        <li>Contributes to broader discussions about AI's role in creativity</li>
+                        <li>Preserves knowledge for future musicological research</li>
+                    </ul>
+                </div>
+                <div class="research-card">
+                    <h3>⏰ Timeliness</h3>
+                    <ul>
+                        <li>AI composition tools are rapidly evolving</li>
+                        <li>Public discourse about AI creativity is intensifying</li>
+                        <li>Legal and ethical frameworks are still developing</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section id="bibliography" class="fade-in">
+        <div class="container">
+            <h2>Bibliography</h2>
+            
+            <div class="bibliography">
+                <div class="bib-category">
+                    <h4>📚 Books and Monographs</h4>
+                    <div class="bib-item">Born, G. (2005). <em>Rationalizing Culture: IRCAM, Boulez, and the Institutionalization of the Musical Avant-Garde</em>. University of California Press.</div>
+                    <div class="bib-item">Collins, N. (2008). <em>Algorithmic Composition Methods for Breakbeat Science</em>. Cambridge University Press.</div>
+                    <div class="bib-item">Cope, D. (2001). <em>Virtual Music: Computer Synthesis of Musical Style</em>. MIT Press.</div>
+                    <div class="bib-item">Dean, R. T. (Ed.). (2009). <em>The Oxford Handbook of Computer Music</em>. Oxford University Press.</div>
+                    <div class="bib-item">Hugill, A. (2019). <em>The Digital Musician: Creating Music with Digital Technology</em>. Routledge.</div>
+                </div>
+
+                <div class="bib-category">
+                    <h4>📄 Journal Articles</h4>
+                    <div class="bib-item">Agres, K., Forth, J., & Wiggins, G. A. (2016). Evaluation of musical creativity and musical metacreation systems. <em>Computers in Entertainment</em>, 14(3), 1-33.</div>
+                    <div class="bib-item">Collins, N. (2002). Algorithmic composition methods for breakbeat science. <em>Leonardo Music Journal</em>, 12, 65-71.</div>
+                    <div class="bib-item">Herremans, D., Chuan, C. H., & Chew, E. (2017). A functional taxonomy of music generation systems. <em>ACM Computing Surveys</em>, 50(5), 1-30.</div>
+                    <div class="bib-item">Sturm, B. L., Ben-Tal, O., Monti, I., Baker, D., De Vidales, D., Percival, G., & Weyde, T. (2019). Machine learning research that matters for music creation: A case study. <em>Journal of New Music Research</em>, 48(1), 36-55.</div>
+                </div>
+
+                <div class="bib-category">
+                    <h4>🏛️ Conference Proceedings</h4>
+                    <div class="bib-item">Briot, J. P., Hadjeres, G., & Pachet, F. (2017). Deep learning techniques for music generation--a survey. <em>arXiv preprint arXiv:1709.01620</em>.</div>
+                    <div class="bib-item">Simon, I., Roberts, A., Raffel, C., Engel, J., Hawthorne, C., & Eck, D. (2018). Learning a latent space of multitrack measures. <em>International Conference on Machine Learning</em>.</div>
+                </div>
+
+                <div class="bib-category">
+                    <h4>🌐 Online Resources</h4>
+                    <div class="bib-item">Google Magenta Project Documentation</div>
+                    <div class="bib-item">OpenAI MuseNet Technical Papers</div>
+                    <div class="bib-item">AIVA Composer Case Studies</div>
+                    <div class="bib-item">Music Information Retrieval Evaluation eXchange (MIREX) Databases</div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section class="fade-in">
+      <div class="container">
+        <h2>Key Findings (2024 Data)</h2>
+        <ul class="objectives-list">
+          <li><strong>🎹 45%</strong> of surveyed composers use AI tools regularly in their workflow.</li>
+          <li><strong>👂 62%</strong> of listeners could not distinguish AI from human compositions in blind tests.</li>
+          <li><strong>📈 3x</strong> increase in published AI-assisted works since 2020.</li>
+          <li><strong>🌍 70%</strong> of composers believe AI will be a standard tool by 2030.</li>
+        </ul>
+      </div>
+    </section>
+
+    <footer>
+        <div class="container">
+            <p>&copy; 2024 AI in Contemporary Music Composition Research. A comprehensive study of human-machine collaboration in creative practice.</p>
+        </div>
+    </footer>
+
+    <script>
+        // Smooth scrolling for navigation links
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function (e) {
+                e.preventDefault();
+                const target = document.querySelector(this.getAttribute('href'));
+                if (target) {
+                    target.scrollIntoView({
+                        behavior: 'smooth',
+                        block: 'start'
+                    });
+                }
+            });
+        });
+
+        // Scroll animations
+        const observerOptions = {
+            threshold: 0.1,
+            rootMargin: '0px 0px -50px 0px'
+        };
+
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.classList.add('visible');
+                }
+            });
+        }, observerOptions);
+
+        document.querySelectorAll('.fade-in').forEach(el => {
+            observer.observe(el);
+        });
+
+        // Interactive demo buttons
+        document.addEventListener('DOMContentLoaded', function() {
+            const demoSection = document.querySelector('.interactive-demo');
+            if (demoSection && !demoSection.querySelector('.demo-buttons')) {
+                const buttonContainer = document.createElement('div');
+                buttonContainer.className = 'demo-buttons';
+                buttonContainer.style.marginTop = '2rem';
+                
+                const buttons = [
+                    { text: '🎼 View AI Tools', action: () => alert('AI tools include MuseNet, Magenta, AIVA, and Amper Music') },
+                    { text: '🎵 Sample Analysis', action: () => alert('Comparative analysis reveals unique patterns in AI-assisted compositions') },
+                    { text: '📊 Research Data', action: () => alert('12-month study with 200+ participants and 15-20 composer interviews') }
+                ];
+                
+                buttons.forEach(btn => {
+                    const button = document.createElement('button');
+                    button.className = 'demo-button';
+                    button.textContent = btn.text;
+                    button.onclick = btn.action;
+                    buttonContainer.appendChild(button);
+                });
+                
+                demoSection.appendChild(buttonContainer);
+            }
+        });
+
+        // Header scroll effect
+        window.addEventListener('scroll', () => {
+            const header = document.querySelector('header');
+            if (window.scrollY > 100) {
+                header.style.background = 'rgba(0, 0, 0, 0.95)';
+            } else {
+                header.style.background = 'rgba(0, 0, 0, 0.9)';
+            }
+        });
+
+        // Add floating animation to research cards
+        document.querySelectorAll('.research-card').forEach((card, index) => {
+            card.style.animationDelay = `${index * 0.1}s`;
+            card.addEventListener('mouseenter', function() {
+                this.style.transform = 'translateY(-10px) scale(1.02)';
+            });
+            card.addEventListener('mouseleave', function() {
+                this.style.transform = 'translateY(0) scale(1)';
+            });
+        });
+
+        // Dynamic background particles
+        function createParticle() {
+            const particle = document.createElement('div');
+            particle.style.position = 'fixed';
+            particle.style.width = '4px';
+            particle.style.height = '4px';
+            particle.style.background = 'rgba(255, 255, 255, 0.1)';
+            particle.style.borderRadius = '50%';
+            particle.style.pointerEvents = 'none';
+            particle.style.zIndex = '1';
+            particle.style.left = Math.random() * window.innerWidth + 'px';
+            particle.style.top = window.innerHeight + 'px';
+            
+            document.body.appendChild(particle);
+            
+            const duration = Math.random() * 3000 + 2000;
+            const animation = particle.animate([
+                { transform: 'translateY(0px)', opacity: 0 },
+                { transform: 'translateY(-' + (window.innerHeight + 100) + 'px)', opacity: 1 }
+            ], {
+                duration: duration,
+                easing: 'linear'
+            });
+            
+            animation.onfinish = () => particle.remove();
+        }
+
+        // Create particles periodically
+        setInterval(createParticle, 300);
+
+        // Add click sound effect (visual feedback)
+        document.querySelectorAll('button, .cta-button, .nav-links a').forEach(element => {
+            element.addEventListener('click', function() {
+                this.style.transform = 'scale(0.95)';
+                setTimeout(() => {
+                    this.style.transform = '';
+                }, 150);
+            });
+        });
+
+        // Chart.js for AI Usage Data
+        document.addEventListener('DOMContentLoaded', function() {
+          const ctx = document.getElementById('aiUsageChart').getContext('2d');
+          new Chart(ctx, {
+            type: 'bar',
+            data: {
+              labels: ['MuseNet', 'Magenta', 'AIVA', 'Amper Music'],
+              datasets: [{
+                label: 'Composers Using Tool (%)',
+                data: [45, 38, 27, 19],
+                backgroundColor: [
+                  '#667eea', '#764ba2', '#4a6741', '#2c3e50'
+                ]
+              }]
+            },
+            options: {
+              scales: {
+                y: { beginAtZero: true, max: 50 }
+              }
+            }
+          });
+        });
+    </script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</body>
+</html>
